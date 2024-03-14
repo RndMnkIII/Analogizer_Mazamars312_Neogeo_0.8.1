@@ -318,12 +318,14 @@ emu Neogeo
 	/*[ANALOGIZER_HOOK_END]*/
 );
 
-
 /*[ANALOGIZER_HOOK_BEGIN]*/
+wire [7:0] neo_r = video_rgb[23:16];
+wire [7:0] neo_g = video_rgb[15: 8];
+wire [7:0] neo_b = video_rgb[ 7: 0];
 wire [5:0] core_r = video_rgb[23:18];
 wire [5:0] core_g = video_rgb[15:10];
 wire [5:0] core_b = video_rgb[7:2];
-wire clk_vid = video_rgb_clock;
+wire clk_vid = video_rgb_clock_90; //video_rgb_clock; //Fixed one bit shift error on RGB channels.
 wire core_hsync, core_vsync;
 wire  SYNC = ~^{core_hsync, core_vsync};
 
@@ -345,6 +347,32 @@ wire [15:0] p1_btn;
 wire [15:0] p2_btn;
 assign PLAYER1 = {6'b000000,p1_btn[14], p1_btn[15], p1_btn[7:4], p1_btn[0], p1_btn[1], p1_btn[2], p1_btn[3]}; // Xbox Controller/Snes controller
 assign PLAYER2 = {6'b000000,p2_btn[14], p2_btn[15], p2_btn[7:4], p2_btn[0], p2_btn[1], p2_btn[2], p2_btn[3]};
+
+
+// wire [7:0] r,g,b;
+// wire hs,vs,hblank,vblank;
+// video_cleaner video_cleaner
+// (
+// 	.clk_vid(clk_vid),
+// 	//.ce_pix(ce_pix),
+
+// 	.R(neo_r),
+// 	.G(neo_g),
+// 	.B(neo_b),
+
+// 	.HSync(video_hs),
+// 	.VSync(video_vs,
+// 	.HBlank(HBlank[0]),
+// 	.VBlank(~nBNKB),
+
+// 	.VGA_R(r),
+// 	.VGA_G(g),
+// 	.VGA_B(b),
+// 	.VGA_VS(vs),
+// 	.VGA_HS(hs),
+// 	.HBlank_out(hblank),
+// 	.VBlank_out(vblank)
+// );
 
 openFPGA_Pocket_Analogizer #(.MASTER_CLK_FREQ(96_000_000)) analogizer (
 	.i_clk(clk_sys),
