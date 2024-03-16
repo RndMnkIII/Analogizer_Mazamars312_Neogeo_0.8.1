@@ -188,6 +188,14 @@
                 "mask": "0xFFFFF8FF",
                 "options": [
                     {
+                    "value": "0x500",
+                    "name": "60Hz Compat."
+                    },
+                    {
+                    "value": "0x600",
+                    "name": "120Hz Compat."
+                    },
+                    {
                     "value": "0x400",
                     "name": "SNES Compat."
                     },

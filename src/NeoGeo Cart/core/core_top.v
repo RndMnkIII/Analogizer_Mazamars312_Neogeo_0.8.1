@@ -349,31 +349,6 @@ assign PLAYER1 = {6'b000000,p1_btn[14], p1_btn[15], p1_btn[7:4], p1_btn[0], p1_b
 assign PLAYER2 = {6'b000000,p2_btn[14], p2_btn[15], p2_btn[7:4], p2_btn[0], p2_btn[1], p2_btn[2], p2_btn[3]};
 
 
-// wire [7:0] r,g,b;
-// wire hs,vs,hblank,vblank;
-// video_cleaner video_cleaner
-// (
-// 	.clk_vid(clk_vid),
-// 	//.ce_pix(ce_pix),
-
-// 	.R(neo_r),
-// 	.G(neo_g),
-// 	.B(neo_b),
-
-// 	.HSync(video_hs),
-// 	.VSync(video_vs,
-// 	.HBlank(HBlank[0]),
-// 	.VBlank(~nBNKB),
-
-// 	.VGA_R(r),
-// 	.VGA_G(g),
-// 	.VGA_B(b),
-// 	.VGA_VS(vs),
-// 	.VGA_HS(hs),
-// 	.HBlank_out(hblank),
-// 	.VBlank_out(vblank)
-// );
-
 openFPGA_Pocket_Analogizer #(.MASTER_CLK_FREQ(96_000_000)) analogizer (
 	.i_clk(clk_sys),
 	.i_rst(~reset_l_main), //i_rst is active high
