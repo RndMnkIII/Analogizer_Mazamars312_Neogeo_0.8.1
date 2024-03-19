@@ -232,7 +232,7 @@ i2s i2s (
 wire debug_led, debug_button;
 
 /*[ANALOGIZER_HOOK_BEGIN]*/
-wire clk_sys;
+wire clk_sys_h;
 /*[ANALOGIZER_HOOK_END]*/
 emu Neogeo
 (
@@ -308,7 +308,7 @@ emu Neogeo
 	.sram_lb_n				( sram_lb_n ),
 
 	/*[ANALOGIZER_HOOK_BEGIN]*/
-	.SYSCLK(clk_sys),
+	.SYSCLK(clk_sys_h),
 	.snac_p1 (PLAYER1 ),
 	.snac_p2 (PLAYER2 ),
 	.core_hsync(core_hsync),
@@ -350,7 +350,7 @@ assign PLAYER2 = {6'b000000,p2_btn[14], p2_btn[15], p2_btn[7:4], p2_btn[0], p2_b
 
 
 openFPGA_Pocket_Analogizer #(.MASTER_CLK_FREQ(96_000_000)) analogizer (
-	.i_clk(clk_sys),
+	.i_clk(clk_sys_h),
 	.i_rst(~reset_l_main), //i_rst is active high
 	.i_ena(1'b1),
 	//Video interface

@@ -247,6 +247,17 @@ module openFPGA_Pocket_Analogizer_SNAC #(parameter MASTER_CLK_FREQ=50_000_000)
     .o_stb (stb_clk)
     );
 
+	 wire dbg_clk_w;
+	 reg dbg_clk /* synthesis noprune */;
+    clock_divider_fract dbgckdiv(
+    .i_clk (i_clk),
+    .i_rst(reset_on_change), //reset on polling freq change
+    .i_step({strobe_step_size[29:0],2'b00}),
+    .o_stb (dbg_clk_w)
+    );
+	 
+	 always @(posedge i_clk) dbg_clk <= dbg_clk_w;
+
     assign o_stb = stb_clk;
 
     //DB15/NES/SNES game controller

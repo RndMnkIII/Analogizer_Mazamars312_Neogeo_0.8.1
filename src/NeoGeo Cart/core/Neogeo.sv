@@ -46,6 +46,7 @@
 // Make access to the memory carts for saves
 // Create a better 6mhz clock/6mhz 90 degree - Done in Alpha 0.6.0
 // Checks on the 3mhz clock in the B1 core need to be 100% as sometimes the reset sync does not get correct at boot.
+`default_nettype none
 
 module emu
 (
@@ -240,7 +241,7 @@ wire sdram_int_clk;
 assign sdram_int_clk = clk_sys;
 
 // Clocks
-wire CLK_12M, CLK_12MB, CLK_68KCLK, CLK_68KCLKB, CLK_8M, CLK_6MB, CLK_4M, CLK_4MB;
+wire CLK_12M, CLK_12MB, CLK_68KCLK, CLK_68KCLKB, CLK_8M, CLK_6MB, CLK_4M, CLK_4MB, CLK_SYS_48;
 
 pll pll_sys(
 	.refclk(clk_74a),
@@ -250,6 +251,7 @@ pll pll_sys(
 	.outclk_2(CLK_VIDEO_90),
 	.outclk_3(CLK_8M),
 	.outclk_4(CLK_4M),
+	.outclk_5(CLK_SYS_48),
 	.reconfig_to_pll(reconfig_to_pll),
 	.reconfig_from_pll(reconfig_from_pll),
 	.locked(locked_1)
@@ -391,7 +393,7 @@ wire [15:0] pocket_p1;	// ----HNLS DCBAUDLR
 wire [15:0] pocket_p2;
 assign 	joystick_0	= (p1_interface) ? snac_p1 : pocket_p1;
 assign 	joystick_1	= (p2_interface) ? snac_p2 : pocket_p2;
-assign SYSCLK = clk_sys;
+assign SYSCLK = CLK_SYS_48;
 /*[ANALOGIZER_HOOK_END]*/
 
 apf_io apf_io

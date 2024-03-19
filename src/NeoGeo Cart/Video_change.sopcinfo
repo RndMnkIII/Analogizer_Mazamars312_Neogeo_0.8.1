@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <EnsembleReport name="Video_change" kind="Video_change" version="1.0" fabric="QSYS">
- <!-- Format version 18.0 614 (Future versions may contain additional information.) -->
- <!-- 2024.03.16.11:11:25 -->
+ <!-- Format version 21.1 842 (Future versions may contain additional information.) -->
+ <!-- 2024.03.18.23:13:15 -->
  <!-- A collection of modules and connections -->
  <parameter name="AUTO_GENERATION_ID">
   <type>java.lang.Integer</type>
-  <value>1710583885</value>
+  <value>1710799995</value>
   <derived>false</derived>
   <enabled>true</enabled>
   <visible>false</visible>
@@ -98,7 +98,7 @@
  <module
    name="in_system_sources_probes_0"
    kind="altera_in_system_sources_probes"
-   version="18.0"
+   version="21.1"
    path="in_system_sources_probes_0">
   <!-- Describes a single module. Module parameters are
 the requested settings for a module instance. -->
@@ -219,7 +219,7 @@ the requested settings for a module instance. -->
    <visible>true</visible>
    <valid>true</valid>
   </parameter>
-  <interface name="sources" kind="conduit_end" version="18.0">
+  <interface name="sources" kind="conduit_end" version="21.1">
    <!-- The connection points exposed by a module instance for the
 particular module parameters. Connection points and their
 parameters are a RESULT of the module parameters. -->
@@ -264,7 +264,7 @@ parameters are a RESULT of the module parameters. -->
     <role>source</role>
    </port>
   </interface>
-  <interface name="source_clk" kind="clock_sink" version="18.0">
+  <interface name="source_clk" kind="clock_sink" version="21.1">
    <!-- The connection points exposed by a module instance for the
 particular module parameters. Connection points and their
 parameters are a RESULT of the module parameters. -->
@@ -309,7 +309,7 @@ parameters are a RESULT of the module parameters. -->
     <role>clk</role>
    </port>
   </interface>
-  <interface name="probes" kind="conduit_end" version="18.0">
+  <interface name="probes" kind="conduit_end" version="21.1">
    <!-- The connection points exposed by a module instance for the
 particular module parameters. Connection points and their
 parameters are a RESULT of the module parameters. -->
@@ -360,8 +360,8 @@ parameters are a RESULT of the module parameters. -->
   <name>altera_in_system_sources_probes</name>
   <type>com.altera.entityinterfaces.IElementClass</type>
   <subtype>com.altera.entityinterfaces.IModule</subtype>
-  <displayName><![CDATA[Altera In-System Sources & Probes]]></displayName>
-  <version>18.0</version>
+  <displayName><![CDATA[Intel FPGA In-System Sources & Probes]]></displayName>
+  <version>21.1</version>
  </plugin>
  <plugin>
   <instanceCount>2</instanceCount>
@@ -369,7 +369,7 @@ parameters are a RESULT of the module parameters. -->
   <type>com.altera.entityinterfaces.IElementClass</type>
   <subtype>com.altera.entityinterfaces.IMutableConnectionPoint</subtype>
   <displayName>Conduit</displayName>
-  <version>18.0</version>
+  <version>21.1</version>
  </plugin>
  <plugin>
   <instanceCount>1</instanceCount>
@@ -377,8 +377,8 @@ parameters are a RESULT of the module parameters. -->
   <type>com.altera.entityinterfaces.IElementClass</type>
   <subtype>com.altera.entityinterfaces.IMutableConnectionPoint</subtype>
   <displayName>Clock Input</displayName>
-  <version>18.0</version>
+  <version>21.1</version>
  </plugin>
- <reportVersion>18.0 614</reportVersion>
+ <reportVersion>21.1 842</reportVersion>
  <uniqueIdentifier></uniqueIdentifier>
 </EnsembleReport>
