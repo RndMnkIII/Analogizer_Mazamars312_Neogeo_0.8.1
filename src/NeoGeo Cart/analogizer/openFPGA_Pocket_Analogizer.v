@@ -69,9 +69,10 @@ module openFPGA_Pocket_Analogizer #(parameter MASTER_CLK_FREQ=50_000_000) (
     input wire i_rst,
 	input wire i_ena,
 	//Video interface
-	input wire [5:0] R,
-	input wire [5:0] G,
-	input wire [5:0] B,
+	input wire [3:0] analog_video_type,
+	input wire [7:0] R,
+	input wire [7:0] G,
+	input wire [7:0] B,
 	input wire BLANKn,
 	input wire Hsync,
 	input wire Vsync,
@@ -135,6 +136,66 @@ module openFPGA_Pocket_Analogizer #(parameter MASTER_CLK_FREQ=50_000_000) (
 		//debug
     	.o_stb(o_stb)
 	); 
+	//Choose type of analog video type of signal
+	reg [5:0] Rout, Gout, Bout;
+	reg HsyncOut, VsyncOut, BLANKnOut;
+	wire [7:0] Yout, PrOut, PbOut;
+	always @(*) begin
+		case(analog_video_type)
+			4'd0: begin //RGBS
+				Rout = R[7:2];
+				Gout = G[7:2];
+				Bout = B[7:2];
+				HsyncOut = Hsync;
+				VsyncOut = 1'b1;
+				BLANKnOut = BLANKn;
+			end
+			4'd1: begin //RGsB
+				Rout = R[7:2];
+				Gout = G[7:2];
+				Bout = B[7:2];
+				HsyncOut = 1'b1;
+				VsyncOut = Hsync; //to DAC SYNC pin, SWITCH SOG ON
+				BLANKnOut = BLANKn;
+			end
+			4'd2: begin //YPbPr
+				Rout = PrOut[7:2];
+				Gout = Yout[7:2];
+				Bout = PbOut[7:2];
+				HsyncOut = 1'b1;
+				VsyncOut = YPbPr_sync; //to DAC SYNC pin, SWITCH SOG ON
+				BLANKnOut = 1'b1; // YPbPr_blank; //FIX with 1'b0 ???
+			end
+			default: begin
+				Rout = R[7:2];
+				Gout = G[7:2];
+				Bout = B[7:2];
+				HsyncOut = Hsync;
+				VsyncOut = 1'b1;
+				BLANKnOut = BLANKn;
+			end
+		endcase
+	end
+
+	wire YPbPr_sync, YPbPr_blank;
+	vga_out ybpr_video
+	(
+		.clk(video_clk),
+		.ypbpr_en((analog_video_type == 4'd2)),
+
+		.hsync(1'b0),
+		.vsync(1'b0),
+		.csync(Hsync),
+		.de(BLANKn),
+
+		.din({R,G,B}),
+		.dout({PrOut,Yout,PbOut}),
+
+		.hsync_o(),
+		.vsync_o(),
+		.csync_o(YPbPr_sync),
+		.de_o(YPbPr_blank)
+	);
 
 	//infer tri-state buffers for cartridge data signals
 	//BK0
@@ -142,13 +203,13 @@ module openFPGA_Pocket_Analogizer #(parameter MASTER_CLK_FREQ=50_000_000) (
 	assign cart_tran_bank0_dir     = i_rst | ~i_ena ? 1'b1 : CART_BK0_DIR;                              //on reset state set pin dir to output
 	assign CART_BK0_IN             = cart_tran_bank0;
 	//BK3
-	assign cart_tran_bank3         = i_rst | ~i_ena ? 8'hzz : {R,Hsync,Vsync};                          //on reset state set ouput value to 8'hZ
+	assign cart_tran_bank3         = i_rst | ~i_ena ? 8'hzz : {Rout[5:0],HsyncOut,VsyncOut};                          //on reset state set ouput value to 8'hZ
 	assign cart_tran_bank3_dir     = i_rst | ~i_ena ? 1'b0  : 1'b1;                                     //on reset state set pin dir to input
 	//BK2
-	assign cart_tran_bank2         = i_rst | ~i_ena ? 8'hzz : {B[0],BLANKn,G};                          //on reset state set ouput value to 8'hZ
+	assign cart_tran_bank2         = i_rst | ~i_ena ? 8'hzz : {Bout[0],BLANKnOut,Gout[5:0]};                          //on reset state set ouput value to 8'hZ
 	assign cart_tran_bank2_dir     = i_rst | ~i_ena ? 1'b0  : 1'b1;                                     //on reset state set pin dir to input
 	//BK1
-	assign cart_tran_bank1         = i_rst | ~i_ena ? 8'hzz : {CART_BK1_OUT_P76,video_clk,B[5:1]};      //on reset state set ouput value to 8'hZ
+	assign cart_tran_bank1         = i_rst | ~i_ena ? 8'hzz : {CART_BK1_OUT_P76,video_clk,Bout[5:1]};      //on reset state set ouput value to 8'hZ
 	assign cart_tran_bank1_dir     = i_rst | ~i_ena ? 1'b0  : 1'b1;                                     //on reset state set pin dir to input
 	//PIN30
 	assign cart_tran_pin30         = i_rst | ~i_ena ? 1'b0 : ((CART_PIN30_DIR) ? CART_PIN30_OUT : 1'bZ); //on reset state set ouput value to 4'hf

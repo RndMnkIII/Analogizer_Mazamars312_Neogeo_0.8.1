@@ -160,6 +160,7 @@ module emu
 	output SYSCLK,
 	input [15:0] snac_p1,
 	input [15:0] snac_p2,
+	output [3:0] analog_video_type,
 	output core_hsync,
 	output core_vsync,
     output [4:0] analogizer_game_controller_type,
@@ -503,6 +504,7 @@ apf_io apf_io
     .analogizer_game_cont_sample_rate(analogizer_game_cont_sample_rate),
     .analogizer_p1_interface(p1_interface), //1 SNAC, 0 Pocket
     .analogizer_p2_interface(p2_interface ), //1 SNAC, 0 Pocket
+	.analog_video_type(analog_video_type)
 	/*[ANALOGIZER_HOOK_END]*/
 );
 

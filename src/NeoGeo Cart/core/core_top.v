@@ -311,6 +311,7 @@ emu Neogeo
 	.SYSCLK(clk_sys_h),
 	.snac_p1 (PLAYER1 ),
 	.snac_p2 (PLAYER2 ),
+	.analog_video_type(analog_video_type),
 	.core_hsync(core_hsync),
 	.core_vsync(core_vsync),
 	.analogizer_game_controller_type(game_cont_type),
@@ -322,9 +323,6 @@ emu Neogeo
 wire [7:0] neo_r = video_rgb[23:16];
 wire [7:0] neo_g = video_rgb[15: 8];
 wire [7:0] neo_b = video_rgb[ 7: 0];
-wire [5:0] core_r = video_rgb[23:18];
-wire [5:0] core_g = video_rgb[15:10];
-wire [5:0] core_b = video_rgb[7:2];
 wire clk_vid = video_rgb_clock_90; //video_rgb_clock; //Fixed one bit shift error on RGB channels.
 wire core_hsync, core_vsync;
 wire  SYNC = ~^{core_hsync, core_vsync};
@@ -335,6 +333,7 @@ wire  SYNC = ~^{core_hsync, core_vsync};
 
 //*** Analogizer Interface V1.0 ***
 wire analogizer_ena;
+wire [3:0] analog_video_type;
 wire [4:0] game_cont_type /* synthesis keep */;
 wire [2:0] game_cont_sample_rate /* synthesis keep */;
 wire p1_interface /* synthesis keep */;
@@ -354,9 +353,10 @@ openFPGA_Pocket_Analogizer #(.MASTER_CLK_FREQ(96_000_000)) analogizer (
 	.i_rst(~reset_l_main), //i_rst is active high
 	.i_ena(1'b1),
 	//Video interface
-	.R(core_r),
-	.G(core_g),
-	.B(core_b),
+	.analog_video_type(analog_video_type),
+	.R(neo_r),
+	.G(neo_g),
+	.B(neo_b),
 	.BLANKn(video_de),
 	.Hsync(SYNC), //composite SYNC on HSync.
 	.Vsync(1'b1),

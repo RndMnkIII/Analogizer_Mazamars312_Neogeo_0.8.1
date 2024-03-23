@@ -203,7 +203,8 @@ module apf_io
     output [4:0] analogizer_game_controller_type,
     output [2:0] analogizer_game_cont_sample_rate,
     output analogizer_p1_interface, //1 SNAC, 0 Pocket
-    output analogizer_p2_interface //1 SNAC, 0 Pocket
+    output analogizer_p2_interface, //1 SNAC, 0 Pocket
+	output [3:0] analog_video_type
 	/*[ANALOGIZER_HOOK_END]*/
 
 	
@@ -807,9 +808,10 @@ synch_3 #(.WIDTH(32)) sync_analogizer(analogizer_settings, analogizer_settings_s
 
 always_comb begin
 	analogizer_game_controller_type    = analogizer_settings_s[4:0];
-	analogizer_p1_interface = analogizer_settings_s[7];
-	analogizer_p2_interface = analogizer_settings_s[6];
+	analogizer_p1_interface            = analogizer_settings_s[7];
+	analogizer_p2_interface            = analogizer_settings_s[6];
 	analogizer_game_cont_sample_rate   = analogizer_settings_s[10:8];
+	analog_video_type                  = analogizer_settings_s[15:12];
 end
 /*[ANALOGIZER_HOOK_END]*/
 

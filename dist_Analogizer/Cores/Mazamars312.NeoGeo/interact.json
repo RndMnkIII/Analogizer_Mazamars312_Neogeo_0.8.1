@@ -216,6 +216,30 @@
                     "name": "Very Fast"
                     }
                 ]
+            },
+            {
+                "name": "Analog Video Mode",
+                "id": 19,
+                "type": "list",
+                "enabled": true,
+                "persist": true,
+                "address": "0xF7000000",
+                "defaultval": "0x0",
+                "mask": "0xFFFF0FFF",
+                "options": [
+                    {
+                    "value": "0x0",
+                    "name": "RGBS"
+                    },
+                    {
+                    "value": "0x1000",
+                    "name": "RGsB"
+                    },
+                    {
+                    "value": "0x2000",
+                    "name": "YPbPr"
+                    }
+                ]
             }
 		],
         "messages": []
