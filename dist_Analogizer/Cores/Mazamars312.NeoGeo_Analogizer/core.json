@@ -3,12 +3,12 @@
         "magic": "APF_VER_1",
         "metadata": {
             "platform_ids": ["ng"],
-            "shortname": "NeoGeo",
-            "description": "Neogeo cart based core",
+            "shortname": "NeoGeo_Analogizer",
+            "description": "[ANALOGIZER] Neogeo cart based core",
             "author": "Mazamars312",
-            "url": "https://github.com/Mazamars312/Analogue_Pocket_Neogeo",
+            "url": "https://github.com/RndMnkIII/Analogizer_Mazamars312_Neogeo_0.8.1",
             "version": "0.8.1",
-            "date_release": "2023-01-17"
+            "date_release": "2024-03-24"
         },
         "framework": {
             "target_product": "Analogue Pocket",
