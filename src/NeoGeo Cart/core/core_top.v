@@ -233,6 +233,7 @@ wire debug_led, debug_button;
 
 /*[ANALOGIZER_HOOK_BEGIN]*/
 wire clk_sys_h;
+wire [23:0] video_rgb2;
 /*[ANALOGIZER_HOOK_END]*/
 emu Neogeo
 (
@@ -249,9 +250,9 @@ emu Neogeo
 	.bridge_spiclk			( bridge_spiclk ),
 	.bridge_spiss			( bridge_spiss ),
 
-	.VGA_R					(video_rgb[23:16]),
-	.VGA_G					(video_rgb[15: 8]),
-	.VGA_B					(video_rgb[ 7: 0]),
+	.VGA_R					(video_rgb2[23:16]),
+	.VGA_G					(video_rgb2[15: 8]),
+	.VGA_B					(video_rgb2[ 7: 0]),
 	.VGA_HS					(video_hs),
 	.VGA_VS					(video_vs),
 	.VGA_DE					(video_de),
@@ -315,14 +316,15 @@ emu Neogeo
 	.core_hsync(core_hsync),
 	.core_vsync(core_vsync),
 	.analogizer_game_controller_type(game_cont_type),
-    .analogizer_game_cont_sample_rate(game_cont_sample_rate)
+    .analogizer_game_cont_sample_rate(game_cont_sample_rate),
+	.blank_pocket_screen(blank_pocket_screen)
 	/*[ANALOGIZER_HOOK_END]*/
 );
 
 /*[ANALOGIZER_HOOK_BEGIN]*/
-wire [7:0] neo_r = video_rgb[23:16];
-wire [7:0] neo_g = video_rgb[15: 8];
-wire [7:0] neo_b = video_rgb[ 7: 0];
+wire [7:0] neo_r = video_rgb2[23:16];
+wire [7:0] neo_g = video_rgb2[15: 8];
+wire [7:0] neo_b = video_rgb2[ 7: 0];
 wire clk_vid = video_rgb_clock_90; //video_rgb_clock; //Fixed one bit shift error on RGB channels.
 wire core_hsync, core_vsync;
 wire  SYNC = ~^{core_hsync, core_vsync};
@@ -331,6 +333,8 @@ wire  SYNC = ~^{core_hsync, core_vsync};
 	wire [15:0] PLAYER1;
 	wire [15:0] PLAYER2;
 
+//Pocket Screen Blanking Control
+assign video_rgb = blank_pocket_screen ? 24'h000 : video_rgb2;
 //*** Analogizer Interface V1.0 ***
 wire analogizer_ena;
 wire [3:0] analog_video_type;
@@ -338,6 +342,7 @@ wire [4:0] game_cont_type /* synthesis keep */;
 wire [2:0] game_cont_sample_rate /* synthesis keep */;
 wire p1_interface /* synthesis keep */;
 wire p2_interface /* synthesis keep */;
+wire blank_pocket_screen;
 // wire BtnCasAplusSEL = 0;
 // wire PauseAsSelplusStart = 0;
 // wire ShowTestPattern = 0;

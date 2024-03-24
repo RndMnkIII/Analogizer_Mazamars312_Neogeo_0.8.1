@@ -204,7 +204,8 @@ module apf_io
     output [2:0] analogizer_game_cont_sample_rate,
     output analogizer_p1_interface, //1 SNAC, 0 Pocket
     output analogizer_p2_interface, //1 SNAC, 0 Pocket
-	output [3:0] analog_video_type
+	output [3:0] analog_video_type,
+	output blank_pocket_screen
 	/*[ANALOGIZER_HOOK_END]*/
 
 	
@@ -812,6 +813,7 @@ always_comb begin
 	analogizer_p2_interface            = analogizer_settings_s[6];
 	analogizer_game_cont_sample_rate   = analogizer_settings_s[10:8];
 	analog_video_type                  = analogizer_settings_s[15:12];
+	blank_pocket_screen                = analogizer_settings_s[16];
 end
 /*[ANALOGIZER_HOOK_END]*/
 

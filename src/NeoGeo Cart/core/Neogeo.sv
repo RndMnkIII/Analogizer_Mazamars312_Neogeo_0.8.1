@@ -164,7 +164,8 @@ module emu
 	output core_hsync,
 	output core_vsync,
     output [4:0] analogizer_game_controller_type,
-    output [2:0] analogizer_game_cont_sample_rate
+    output [2:0] analogizer_game_cont_sample_rate,
+	output blank_pocket_screen
 	/*[ANALOGIZER_HOOK_END]*/
 );
 
@@ -504,7 +505,8 @@ apf_io apf_io
     .analogizer_game_cont_sample_rate(analogizer_game_cont_sample_rate),
     .analogizer_p1_interface(p1_interface), //1 SNAC, 0 Pocket
     .analogizer_p2_interface(p2_interface ), //1 SNAC, 0 Pocket
-	.analog_video_type(analog_video_type)
+	.analog_video_type(analog_video_type),
+	.blank_pocket_screen(blank_pocket_screen)
 	/*[ANALOGIZER_HOOK_END]*/
 );
 
