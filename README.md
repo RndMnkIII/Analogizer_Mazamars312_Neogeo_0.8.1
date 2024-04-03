@@ -1,4 +1,5 @@
-# Neogeo for Pocket (0.8.1)
+# ADAPTED FOR ANALOGIZER: Neogeo for Pocket (0.8.1)
+Analogizer support added by RndMnkIII. See more in the Analogizer main repository: [Analogizer](https://github.com/RndMnkIII/Analogizer)
 
 This is the port of the Neogeo Core made by [Furrtek](https://www.patreon.com/furrtek/posts) to the Analogue Pocket using the APF framework and some of my own code.
 
