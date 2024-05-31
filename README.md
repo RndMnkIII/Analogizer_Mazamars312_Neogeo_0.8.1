@@ -1,12 +1,11 @@
 # Neogeo for Pocket (0.8.1) with support for Analogizer-FPGA adapter
 
 * Analogizer V1.0   [24/03/2024]: Analogizer initial support for RGBS,RGsB and YPbPr.
-* Analogizer v1.1   [05/08/2024]: Added Y/C and Scandoubler SVGA video output.
+* Analogizer v1.1   [31/05/2024]: Added Y/C and Scandoubler SVGA video output.
   
 Adapted to Analogizer by [@RndMnkIII](https://github.com/RndMnkIII) based on **Mazamars312** Neogeo for Pocket (0.8.1) Core.
 
 The core can output RGBS, RGsB, YPbPr, Y/C and SVGA scandoubler (50% scanlines) video signals.
-
 | Video output | Status |   SOG Switch     |
 | :----------- | :----: | :--------------: |
 | RGBS         |  ✅    |     Off          |
