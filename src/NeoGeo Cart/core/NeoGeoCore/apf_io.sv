@@ -200,12 +200,10 @@ module apf_io
 	output reg [31:0] 	screen_x_pos,
 	output reg [31:0] 	screen_y_pos,
 	/*[ANALOGIZER_HOOK_BEGIN]*/
-    output [4:0] analogizer_game_controller_type,
-    output [2:0] analogizer_game_cont_sample_rate,
-    output analogizer_p1_interface, //1 SNAC, 0 Pocket
-    output analogizer_p2_interface, //1 SNAC, 0 Pocket
-	output [3:0] analog_video_type,
-	output blank_pocket_screen
+    output [4:0] snac_game_cont_type,
+    output [3:0] snac_cont_assignment,
+	output [3:0] analogizer_video_type
+
 	/*[ANALOGIZER_HOOK_END]*/
 
 	
@@ -608,7 +606,7 @@ reg			Core_reset;
 reg [25:0]	Core_reset_counter;	
 reg			system_change;
 reg			overclock_change;		
-reg [31:0] analogizer_settings;
+reg [13:0] analogizer_settings;
 	
 // APF write access over the 32bit address system and setup of the core
 always @(posedge clk_74a or negedge reset_l_main) begin
@@ -643,7 +641,7 @@ always @(posedge clk_74a or negedge reset_l_main) begin
 		system_change			<= 'b0;
 		CPU_overclock			<= 'b0;
 		/*[ANALOGIZER_HOOK_BEGIN]*/
-		analogizer_settings <= 32'h00000000;
+		analogizer_settings <= 14'h0000;
 		/*[ANALOGIZER_HOOK_END]*/
 	end
 	else begin
@@ -724,7 +722,7 @@ always @(posedge clk_74a or negedge reset_l_main) begin
 				32'hF0000410 : cart_chip				<= bridge_wr_data;
 				
 				/*[ANALOGIZER_HOOK_BEGIN]*/
-				32'hF7000000 : analogizer_settings  <=  bridge_wr_data;
+				32'hF7000000 : analogizer_settings  <=  bridge_wr_data[13:0];
 				/*[ANALOGIZER_HOOK_END]*/
 
 
@@ -790,7 +788,7 @@ always @(*) begin
 	end
 	/*[ANALOGIZER_HOOK_BEGIN]*/
 	32'hF7xxxxxx: begin
-		bridge_rd_data 	<= analogizer_settings;
+		bridge_rd_data 	<= {18'h0,analogizer_settings};
 	end
 	/*[ANALOGIZER_HOOK_END]*/
 	32'hF8xxxxxx: begin
@@ -803,17 +801,14 @@ always @(*) begin
 end
 
 /*[ANALOGIZER_HOOK_BEGIN]*/
-wire [31:0] analogizer_settings_s;
+wire [13:0] analogizer_settings_s;
 
-synch_3 #(.WIDTH(32)) sync_analogizer(analogizer_settings, analogizer_settings_s, clk_sys);
+synch_3 #(.WIDTH(14)) sync_analogizer(analogizer_settings, analogizer_settings_s, clk_sys);
 
 always_comb begin
-	analogizer_game_controller_type    = analogizer_settings_s[4:0];
-	analogizer_p1_interface            = analogizer_settings_s[7];
-	analogizer_p2_interface            = analogizer_settings_s[6];
-	analogizer_game_cont_sample_rate   = analogizer_settings_s[10:8];
-	analog_video_type                  = analogizer_settings_s[15:12];
-	blank_pocket_screen                = analogizer_settings_s[16];
+  snac_game_cont_type   = analogizer_settings_s[4:0];
+  snac_cont_assignment  = analogizer_settings_s[9:6];
+  analogizer_video_type = analogizer_settings_s[13:10];
 end
 /*[ANALOGIZER_HOOK_END]*/
 

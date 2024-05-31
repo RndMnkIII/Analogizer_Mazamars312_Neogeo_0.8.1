@@ -78,6 +78,8 @@ module emu
 	output reg [7:0] 	VGA_B,
 	output reg       	VGA_HS,
 	output reg       	VGA_VS,
+	output reg          VGA_HB,
+	output reg          VGA_VB,
 	output reg       	VGA_DE,    // = ~(VBlank | HBlank)
 	output        		VGA_F1,
 	output [1:0]  		VGA_SL,
@@ -158,14 +160,16 @@ module emu
 
 	/*[ANALOGIZER_HOOK_BEGIN]*/
 	output SYSCLK,
+	output VIDCLK,
+	output VIDEO_MODE,
+	output SYSTEM,
 	input [15:0] snac_p1,
 	input [15:0] snac_p2,
-	output [3:0] analog_video_type,
 	output core_hsync,
 	output core_vsync,
-    output [4:0] analogizer_game_controller_type,
-    output [2:0] analogizer_game_cont_sample_rate,
-	output blank_pocket_screen
+    output [4:0] snac_game_cont_type,
+    output [3:0] snac_cont_assignment,
+	output [3:0] analogizer_video_type
 	/*[ANALOGIZER_HOOK_END]*/
 );
 
@@ -241,10 +245,10 @@ wire CLK_24M = counter_p[1];
 wire sdram_int_clk;
 
 assign sdram_int_clk = clk_sys;
-
+assign VIDCLK = CLK_SYS_48;
 // Clocks
 wire CLK_12M, CLK_12MB, CLK_68KCLK, CLK_68KCLKB, CLK_8M, CLK_6MB, CLK_4M, CLK_4MB, CLK_SYS_48;
-
+//pll_0002.v pll_0002
 pll pll_sys(
 	.refclk(clk_74a),
 	.rst(0),
@@ -393,8 +397,43 @@ wire [2:0]  C1_wait;
 wire p1_interface, p2_interface;
 wire [15:0] pocket_p1;	// ----HNLS DCBAUDLR
 wire [15:0] pocket_p2;
-assign 	joystick_0	= (p1_interface) ? snac_p1 : pocket_p1;
-assign 	joystick_1	= (p2_interface) ? snac_p2 : pocket_p2;
+
+always @(posedge clk_sys) begin
+	if(snac_game_cont_type == 5'h0) begin //SNAC is disabled
+					joystick_0 <= pocket_p1;
+					joystick_1 <= pocket_p2;
+
+	end
+	else begin
+		case(snac_cont_assignment)
+		4'h0:    begin 
+					joystick_0 <= snac_p1;
+					joystick_1 <= pocket_p2;
+
+				end
+		4'h1:    begin 
+					joystick_0 <= pocket_p1;
+					joystick_1 <= snac_p1;
+
+				end
+		4'h2:    begin
+					joystick_0 <= snac_p1;
+					joystick_1 <= snac_p2;
+
+				end
+		4'h3:    begin
+					joystick_0 <= snac_p2;
+					joystick_1 <= snac_p1;
+
+				end
+		default: begin
+					joystick_0 <= pocket_p1;
+					joystick_1 <= pocket_p2;
+
+				end
+		endcase
+	end
+end
 assign SYSCLK = CLK_SYS_48;
 /*[ANALOGIZER_HOOK_END]*/
 
@@ -501,12 +540,9 @@ apf_io apf_io
 	.screen_x_pos				(screen_x_pos),
 	.screen_y_pos				(screen_y_pos),
 	/*[ANALOGIZER_HOOK_BEGIN]*/
-	.analogizer_game_controller_type(analogizer_game_controller_type),
-    .analogizer_game_cont_sample_rate(analogizer_game_cont_sample_rate),
-    .analogizer_p1_interface(p1_interface), //1 SNAC, 0 Pocket
-    .analogizer_p2_interface(p2_interface ), //1 SNAC, 0 Pocket
-	.analog_video_type(analog_video_type),
-	.blank_pocket_screen(blank_pocket_screen)
+	.snac_game_cont_type(snac_game_cont_type),
+	.snac_cont_assignment(snac_cont_assignment),
+	.analogizer_video_type(analogizer_video_type)
 	/*[ANALOGIZER_HOOK_END]*/
 );
 
@@ -865,7 +901,7 @@ neo_d0 D0(
 	.CLK_12M				(CLK_12M),
 	.CLK_68KCLK			(CLK_68KCLK), 
 	.CLK_68KCLKB		(CLK_68KCLKB), 
-//	.CLK_6MB				(CLK_6MB), 
+ 	//.CLK_6MB				(CLK_6MB), 
 	.M68K_ADDR_A4		(M68K_ADDR[4]),
 	.M68K_DATA			(M68K_DATA[5:0]),
 	.nBITWD0				(nBITWD0),
@@ -1644,6 +1680,8 @@ wire [7:0] VGA_B_wire = B6[6] ? 8'd0 : {B6[5:0],  B6[4:3]};
 reg [7:0]	VGA_R_reg;
 reg [7:0]	VGA_G_reg;
 reg [7:0]	VGA_B_reg;
+assign VIDEO_MODE = video_mode_reg;
+assign SYSTEM = SYSTEM_TYPE;
 	
 
 	//Analogizer hook
@@ -1652,6 +1690,8 @@ reg [7:0]	VGA_B_reg;
 
 always @(posedge CLK_VIDEO) begin
 	VGA_DE <= 0;
+	VGA_HB <= 0;
+	VGA_VB <= 0;
 	VGA_R <= 8'h0;
 	VGA_G <= 8'h0;
 	VGA_B <= 8'h0; // This is where we change the scaler between both pal to ntsc Will work on this shortly
@@ -1707,7 +1747,11 @@ always @(posedge CLK_VIDEO) begin
 	end
 	
 	// Video Enable
+	if((y_count >= VID_V_BPORCH) && (y_count < (VID_V_ACTIVE + VID_V_BPORCH))) begin
+		VGA_VB <= 1'b1;
+	end
 	if(x_count >= VID_H_BPORCH && x_count < VID_H_ACTIVE_REG + VID_H_BPORCH) begin
+		VGA_HB <= 1'b1;
 		if((y_count >= VID_V_BPORCH) && (y_count < (VID_V_ACTIVE + VID_V_BPORCH))) begin
 			// data enable. this is the active region of the line
 			VGA_DE <= 1'b1;

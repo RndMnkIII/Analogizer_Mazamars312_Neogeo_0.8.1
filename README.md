@@ -1,4 +1,42 @@
-# ADAPTED FOR ANALOGIZER: Neogeo for Pocket (0.8.1)
+# Neogeo for Pocket (0.8.1) with support for Analogizer-FPGA adapter
+
+* Analogizer V1.0   [24/03/2024]: Analogizer initial support for RGBS,RGsB and YPbPr.
+* Analogizer v1.1   [05/08/2024]: Added Y/C and Scandoubler SVGA video output.
+  
+Adapted to Analogizer by [@RndMnkIII](https://github.com/RndMnkIII) based on **Mazamars312** Neogeo for Pocket (0.8.1) Core.
+
+The core can output RGBS, RGsB, YPbPr, Y/C and SVGA scandoubler (50% scanlines) video signals.
+
+| Video output | Status |   SOG Switch     |
+| :----------- | :----: | :--------------: |
+| RGBS         |  ✅    |     Off          |
+| RGsB         |  ✅    |     On           |
+| YPbPr        |  ✅    |     On           |
+| Y/C*         |  ✅    |     Off          |
+| Scandoubler  |  ✅    |     Off          |
+
+* **Analogizer** is responsible for generating the correct encoded Y/C signals from RGB and outputs to R,G pins of VGA port. Also redirects the CSync to VGA HSync pin.
+The required external Y/C adapter that connects to VGA port is responsible for output Svideo o composite video signal using his internal electronics. Oficially
+only the Mike Simone Y/C adapters (active) designs will be supported by Analogizer and will be the ones to use.
+However, depending on the type of screen you have, passive Y/C adapters could work with different degrees of success.
+
+For output Y/C and composite video you need to select in Pocket's Menu: `Analogizer Video Out > Y/C` or `Analogizer Video Out > Y/C,Pocket OFF`.
+
+For output Scandoubler SVGA video you need to select in Pocket's Menu: `Analogizer Video Out > Scandoubler RGBHV` or `Analogizer Video Out > Scandoubler,Pocket OFF`.
+
+You will need to connect an active VGA to Y/C adapter to the VGA port (the 5V power is provided by VGA pin 9). I'll recomend one of these (active):
+* [MiSTerAddons - Active Y/C Adapter](https://misteraddons.com/collections/parts/products/yc-active-encoder-board/)
+* [MikeS11 Active VGA to Composite / S-Video](https://ultimatemister.com/product/mikes11-active-composite-svideo/)
+* [Active VGA->Composite/S-Video adapter](https://antoniovillena.com/product/mikes1-vga-composite-adapter/)
+
+Using another type of Y/C adapter not tested to be used with Analogizer will not receive official support.
+
+I'll recomend also read this guide for MiSTer FPGA but can applied to Analogizer:
+[MiSTer FPGA Documentation: Using Your CRT With MiSTer](https://mister-devel.github.io/MkDocs_MiSTer/advanced/crt/)
+
+See Analogizer repository:
+https://github.com/RndMnkIII/Analogizer
+===================================================================================
 Analogizer support added by RndMnkIII. See more in the Analogizer main repository: [Analogizer](https://github.com/RndMnkIII/Analogizer)
 
 This is the port of the Neogeo Core made by [Furrtek](https://www.patreon.com/furrtek/posts) to the Analogue Pocket using the APF framework and some of my own code.
