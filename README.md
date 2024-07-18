@@ -2,6 +2,8 @@
 
 * Analogizer V1.0   [24/03/2024]: Analogizer initial support for RGBS,RGsB and YPbPr.
 * Analogizer v1.1   [31/05/2024]: Added Y/C and Scandoubler SVGA video output.
+* Analogizer v1.1.1 [18/07/2024]: Fixed support for the MiSTer to JAMMA DB15 SNAC adapter: https://es.aliexpress.com/item/1005005002230586.html?gatewayAdapt=glo2esp
+
   
 Adapted to Analogizer by [@RndMnkIII](https://github.com/RndMnkIII) based on **Mazamars312** Neogeo for Pocket (0.8.1) Core.
 

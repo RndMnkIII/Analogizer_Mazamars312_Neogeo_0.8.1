@@ -309,7 +309,7 @@ module openFPGA_Pocket_Analogizer_SNAC #(parameter MASTER_CLK_FREQ=50_000_000)
         .o_clk(SERLAT_SNAC_OUT1), //shared for 2 controllers
         .o_clk2(SNAC_IO5_A),
         .o_lat(SERLAT_SNAC_OUT2), //shared for 2 controllers
-        .i_dat1(SNAC_IO3_A), //data from controller 1
+        .i_dat1((game_cont_type == 5'h1 || game_cont_type == 5'h9) ? SNAC_IO3_A & SNAC_IO6_A : SNAC_IO3_A ), //data from controller 1
         .i_dat2(SNAC_IN7)  //data from controller 2
     );
 
