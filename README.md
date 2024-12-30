@@ -2,19 +2,55 @@
 
 * Analogizer V1.0   [24/03/2024]: Analogizer initial support for RGBS,RGsB and YPbPr.
 * Analogizer v1.1   [31/05/2024]: Added Y/C and Scandoubler SVGA video output.
-* Analogizer v1.1.1 [18/07/2024]: Fixed support for the MiSTer to JAMMA DB15 SNAC adapter: https://es.aliexpress.com/item/1005005002230586.html?gatewayAdapt=glo2esp
+* Analogizer v1.1.1 [18/07/2024]: Fixed support for the MiSTer to JAMMA DB15 SNAC adapter: 
+  https://es.aliexpress.com/item/1005005002230586.html?gatewayAdapt=glo2esp
+* Analogizer v1.1.2 [30/12/2024]: Added suppport for PSX digital(SCPH1080)/DS/DS2(SCPH10010) SNAC game controllers for 1/2 players.  The PSX DS/DS2
+  can be used in **Digital DPAD** mode (ignores the analog sticks, regardless of the ANALOG button setting on the controller) or in **Analog DPAD** mode (left analog stick is mapped to DPAD movements)
 
-  
 Adapted to Analogizer by [@RndMnkIII](https://github.com/RndMnkIII) based on **Mazamars312** Neogeo for Pocket (0.8.1) Core.
 
 The core can output RGBS, RGsB, YPbPr, Y/C and SVGA scandoubler (50% scanlines) video signals.
-| Video output | Status |   SOG Switch     |
-| :----------- | :----: | :--------------: |
-| RGBS         |  ✅    |     Off          |
-| RGsB         |  ✅    |     On           |
-| YPbPr        |  ✅    |     On           |
-| Y/C*         |  ✅    |     Off          |
-| Scandoubler  |  ✅    |     Off          |
+| Video output | Status | SOG Switch(Only R2,R3 Analogizer) |
+| :----------- | :----: | :-------------------------------: |     
+| RGBS         |  ✅    |     Off                           |
+| RGsB         |  ✅    |     On                            |
+| YPbPr        |  ✅🔹  |     On                            |
+| Y/C NTSC     |  ✅    |     Off                           |
+| Y/C PAL      |  ✅    |     Off                           |
+| Scandoubler  |  ✅    |     Off                           |
+
+🔹 Tested with Sony PVM-9044D
+
+| :SNAC game controller:  | Analogizer A/B config Switch | Status |
+| :---------------------- | :--------------------------- | :----: |
+| DB15                    | A                            |  ✅    |
+| NES                     | A                            |  ✅    |
+| SNES                    | A                            |  ✅    |
+| PCENGINE                | A                            |  ✅    |
+| PCE MULTITAP            | A                            |  ✅    |
+| PSX DS/DS2 Digital DPAD | B                            |  ✅    |
+| PSX DS/DS2 Analog  DPAD | B                            |  ✅    |
+
+The Analogizer interface allow to mix game inputs from compatible SNAC gamepads supported by Analogizer (DB15 Neogeo, NES, SNES, PCEngine, PSX) with Analogue Pocket built-in controls or from Dock USB or wireless supported controllers (Analogue support).
+
+All Analogizer adapter versions (v1, v2 and v3) has a side slide switch labeled as 'A B' that must be configured based on the used SNAC game controller.
+For example for use it with PSX Dual Shock or Dual Shock 2 native gamepad you must position the switch lever on the B side position. For the remaining
+game controllers you must switch the lever on the A side position. 
+Be careful when handling this switch. Use something with a thin, flat tip such as a precision screwdriver with a 2.0mm flat blade for example. Place the tip on the switch lever and press gently until it slides into the desired position:
+
+```
+     ---
+   B|O  |A  A/B switch on position B
+     ---   
+     ---
+   B|  O|A  A/B switch on position A
+     ---
+``` 
+The following options exist in the core menu to configure Analogizer:
+* **SNAC Adapter** List: None, DB15,NES,SNES,PCE,PCE Multitap, SNES swap A,B<->X,Y buttons, PSX (Digital DPAD), PSX (Analog DPAD).
+* **SNAC Controller Assignment** List: several options about how to map SNAC controllers to P1-P4 Pocket controls. The controls not mapped to SNAC by default will map to Pocket connected controllers (Pocket built-in or Dock).
+* **Analogizer Video Out** List: you can choose between RGBS (VGA to SCART), RGsB (works is a PVM as YPbPr but using RGB color space), YPbPr (for TV with component video input),
+Y/C NTSC or PAL (for SVideo o compositive video using Y/C Active adapter by Mike S11), RGBHV for SVGA monitor Scandouble video output.
 
 * **Analogizer** is responsible for generating the correct encoded Y/C signals from RGB and outputs to R,G pins of VGA port. Also redirects the CSync to VGA HSync pin.
 The required external Y/C adapter that connects to VGA port is responsible for output Svideo o composite video signal using his internal electronics. Oficially

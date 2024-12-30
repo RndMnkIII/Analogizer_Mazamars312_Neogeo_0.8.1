@@ -119,42 +119,50 @@
                 "defaultval": "0x00",
                 "mask": "0xFFFFFFE0",
                 "options": [
-                    {
-                    "value": "0x00",
-                    "name": "None"
-                    },
-                    {
-                    "value": "0x01",
-                    "name": "DB15 Normal"
-                    },
-                    {
-                    "value": "0x02",
-                    "name": "NES"
-                    },
-                    {
-                    "value": "0x03",
-                    "name": "SNES"
-                    },
-                    {
-                    "value": "0x04",
-                    "name": "PCE 2BTN"
-                    },
-                    {
-                    "value": "0x05",
-                    "name": "PCE 6BTN"
-                    },
-                    {
-                    "value": "0x06",
-                    "name": "PCE Multitap"
-                    },
-                    {
-                      "value": "0x09",
-                      "name": "DB15 Fast"
-                    },
-                    {
-                      "value": "0x0B",
-                      "name": "SNES A,B<->X,Y"
-                    }
+                  {
+                  "value": "0x00",
+                  "name": "None"
+                  },
+                  {
+                  "value": "0x01",
+                  "name": "DB15 Normal"
+                  },
+                  {
+                  "value": "0x02",
+                  "name": "NES"
+                  },
+                  {
+                  "value": "0x03",
+                  "name": "SNES"
+                  },
+                  {
+                  "value": "0x04",
+                  "name": "PCE 2BTN"
+                  },
+                  {
+                  "value": "0x05",
+                  "name": "PCE 6BTN"
+                  },
+                  {
+                  "value": "0x06",
+                  "name": "PCE Multitap"
+                  },
+                  {
+                    "value": "0x09",
+                    "name": "DB15 Fast"
+                  },
+                  {
+                    "value": "0x0B",
+                    "name": "SNES A,B<->X,Y"
+                  },
+                  {
+                    "value": "0x11",
+                    "name": "PSX (Digital DPAD)"
+                  },
+                  {
+                    "value": "0x13",
+                    "name": "PSX (Analog DPAD)"
+                  }
                 ]
             },
             {
@@ -195,45 +203,69 @@
                 "defaultval": "0x0",
                 "mask": "0xFFFFC3FF",
                 "options": [
-                    {
-                      "value": "0x0",
-                      "name": "RGBS"
-                    },
-                    {
-                      "value": "0x0400",
-                      "name": "RGsB"
-                    },
-                    {
-                      "value": "0x0800",
-                      "name": "YPbPr"
-                    },
-                    {
-                      "value": "0x0C00",
-                      "name": "Y/C"
-                    },
-                    {
-                      "value": "0x1400",
-                      "name": "Scandoubler RGBHV"
-                    },
-                    {
-                      "value": "0x2000",
-                      "name": "RGBS,Pocket OFF"
-                    },
-                    {
-                      "value": "0x2400",
-                      "name": "RGsB,Pocket OFF"
-                    },
-                    {
-                      "value": "0x2800",
-                      "name": "YPbPr,Pocket OFF"
-                    },            
-                    {
-                      "value": "0x2C00",
-                      "name": "Y/C,Pocket OFF"
-                    },           {
-                      "value": "0x3400",
-                      "name": "Scandoubler,Pocket OFF"
-                    }
+                  {
+                    "value": "0x0",
+                    "name": "RGBS"
+                  },
+                  {
+                    "value": "0x0400",
+                    "name": "RGsB"
+                  },
+                  {
+                    "value": "0x0800",
+                    "name": "YPbPr"
+                  },
+                  {
+                    "value": "0x0C00",
+                    "name": "Y/C NTSC"
+                  },
+                  {
+                    "value": "0x1000",
+                    "name": "Y/C PAL"
+                  },
+                  {
+                    "value": "0x1400",
+                    "name": "SC 0% RGBHV"
+                  },
+                  {
+                      "value": "0x1800",
+                      "name": "SC 50% RGBHV"
+                  },
+                  {
+                      "value": "0x1C00",
+                      "name": "SC HQ2x RGBHV"
+                  },
+                  {
+                    "value": "0x2000",
+                    "name": "RGBS,Pocket OFF"
+                  },
+                  {
+                    "value": "0x2400",
+                    "name": "RGsB,Pocket OFF"
+                  },
+                  {
+                    "value": "0x2800",
+                    "name": "YPbPr,Pocket OFF"
+                  },            {
+                    "value": "0x2C00",
+                    "name": "Y/C NTSC,Pocket OFF"
+                  },
+                  {
+                    "value": "0x3000",
+                    "name": "Y/C PAL,Pocket OFF"
+                  },
+                  {
+                    "value": "0x3400",
+                    "name": "SC 0% SC,Pocket OFF"
+                  },
+                  {
+                      "value": "0x3800",
+                      "name": "SC 50% RGBHV,Pocket OFF"
+                  },
+                  {
+                      "value": "0x3C00",
+                      "name": "SC HQ2x RGBHV,Pocket OFF"
+                  }
                 ]
             }
 		],

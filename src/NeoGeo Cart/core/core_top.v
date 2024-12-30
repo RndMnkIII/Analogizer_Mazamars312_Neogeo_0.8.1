@@ -234,6 +234,7 @@ wire debug_led, debug_button;
 /*[ANALOGIZER_HOOK_BEGIN]*/
 wire clk_sys_h;
 wire [23:0] video_rgb2;
+wire CE_PIXEL;
 /*[ANALOGIZER_HOOK_END]*/
 emu Neogeo
 (
@@ -250,6 +251,7 @@ emu Neogeo
 	.bridge_spiclk			( bridge_spiclk ),
 	.bridge_spiss			( bridge_spiss ),
 
+	.CE_PIXEL               (CE_PIXEL),
 	.VGA_R					(video_rgb2[23:16]),
 	.VGA_G					(video_rgb2[15: 8]),
 	.VGA_B					(video_rgb2[ 7: 0]),
@@ -304,7 +306,7 @@ emu Neogeo
 	.SDRAM_CKE				( dram_cke ),
 	
 	.sram_a					( sram_a ),
-	.sram_dq					( sram_dq ),
+	.sram_dq				( sram_dq ),
 	.sram_oe_n				( sram_oe_n ),
 	.sram_we_n				( sram_we_n ),
 	.sram_ub_n				( sram_ub_n ),
@@ -316,7 +318,9 @@ emu Neogeo
 	.VIDEO_MODE(VIDEO_MODE),
 	.SYSTEM(SYSTEM_TYPE),
 	.snac_p1 (PLAYER1 ),
+	.snac_p1_stick(p1_stick),
 	.snac_p2 (PLAYER2 ),
+	.snac_p2_stick(p2_stick),
 	.core_hsync(core_hsync),
 	.core_vsync(core_vsync),
 	.snac_game_cont_type(snac_game_cont_type),
@@ -351,9 +355,12 @@ wire [3:0] snac_cont_assignment /* synthesis keep */;
 
 
 wire [15:0] p1_btn;
-wire [15:0] p2_btn;
-assign PLAYER1 = {6'b000000,p1_btn[14], p1_btn[15], p1_btn[7:4], p1_btn[0], p1_btn[1], p1_btn[2], p1_btn[3]}; // Xbox Controller/Snes controller
-assign PLAYER2 = {6'b000000,p2_btn[14], p2_btn[15], p2_btn[7:4], p2_btn[0], p2_btn[1], p2_btn[2], p2_btn[3]};
+wire [15:0] p2_btn;     
+wire [31:0] p1_stick;
+wire [31:0] p2_stick;                                      
+//                                                               UP         DOWN       LEFT       RIGHT
+assign PLAYER1 = {6'b000000,p1_btn[14], p1_btn[15], p1_btn[7:4], p1_btn[3], p1_btn[2], p1_btn[1], p1_btn[0]}; // Xbox Controller/Snes controller
+assign PLAYER2 = {6'b000000,p2_btn[14], p2_btn[15], p2_btn[7:4], p2_btn[3], p2_btn[2], p2_btn[1], p2_btn[0]};
 
 // SET PAL and NTSC TIMING and pass through status bits. ** YC must be enabled in the qsf file **
 wire [39:0] CHROMA_PHASE_INC;
@@ -365,14 +372,14 @@ wire YC_EN;
 parameter NTSC_REF = 3.579545;   
 parameter PAL_REF = 4.43361875;
 // Colorburst Lenth Calculation to send to Y/C Module, based on the CLK_VIDEO of the core
-localparam [6:0] COLORBURST_START    = (3.7 * (CLK_VIDEO_NTSC/NTSC_REF));
-localparam [9:0] COLORBURST_NTSC_END = (9 * (CLK_VIDEO_NTSC/NTSC_REF)) + COLORBURST_START;
-localparam [9:0] COLORBURST_PAL_END  = (10 * (CLK_VIDEO_PAL/PAL_REF)) + COLORBURST_START;
+// localparam [6:0] COLORBURST_START    = (3.7 * (CLK_VIDEO_NTSC/NTSC_REF));
+// localparam [9:0] COLORBURST_NTSC_END = (9 * (CLK_VIDEO_NTSC/NTSC_REF)) + COLORBURST_START;
+// localparam [9:0] COLORBURST_PAL_END  = (10 * (CLK_VIDEO_PAL/PAL_REF)) + COLORBURST_START;
 
 // Colorburst Lenth Calculation to send to Y/C Module, based on the CLK_VIDEO of the core
-localparam [6:0] AES_COLORBURST_START    = (3.7 * (CLK_VIDEO_NTSC_AES/NTSC_REF));                 
-localparam [9:0] AES_COLORBURST_NTSC_END = (9 * (CLK_VIDEO_NTSC_AES/NTSC_REF)) + AES_COLORBURST_START;
-localparam [9:0] AES_COLORBURST_PAL_END  = (10 * (CLK_VIDEO_PAL_AES/PAL_REF)) + AES_COLORBURST_START;
+// localparam [6:0] AES_COLORBURST_START    = (3.7 * (CLK_VIDEO_NTSC_AES/NTSC_REF));                 
+// localparam [9:0] AES_COLORBURST_NTSC_END = (9 * (CLK_VIDEO_NTSC_AES/NTSC_REF)) + AES_COLORBURST_START;
+// localparam [9:0] AES_COLORBURST_PAL_END  = (10 * (CLK_VIDEO_PAL_AES/PAL_REF)) + AES_COLORBURST_START;
 
 // Parameters to be modifed
 parameter CLK_VIDEO_NTSC = 48; // Must be filled E.g XX.X Hz - CLK_VIDEO
@@ -385,15 +392,26 @@ wire [39:0] PAL_PHASE_INC  = SYSTEM_TYPE ? 40'd101558653516 : 40'd100853398308; 
 
 // Send Parameters to Y/C Module
 assign CHROMA_PHASE_INC = VIDEO_MODE ? PAL_PHASE_INC : NTSC_PHASE_INC; 
-assign CHROMA_ADD = 5'd0; //yc_chroma_add_s;
-assign CHROMA_MULT = 5'd0; //yc_chroma_mult_s;
-assign COLORBURST_RANGE = SYSTEM_TYPE ? {COLORBURST_START, COLORBURST_NTSC_END, COLORBURST_PAL_END} : {AES_COLORBURST_START, AES_COLORBURST_NTSC_END, AES_COLORBURST_PAL_END}; // Pass colorburst length
+// assign CHROMA_ADD = 5'd0; //yc_chroma_add_s;
+// assign CHROMA_MULT = 5'd0; //yc_chroma_mult_s;
+// assign COLORBURST_RANGE = SYSTEM_TYPE ? {COLORBURST_START, COLORBURST_NTSC_END, COLORBURST_PAL_END} : {AES_COLORBURST_START, AES_COLORBURST_NTSC_END, AES_COLORBURST_PAL_END}; // Pass colorburst length
 
-openFPGA_Pocket_Analogizer #(.MASTER_CLK_FREQ(48_000_000)) analogizer (
+reg [2:0] fx /* synthesis preserve */;
+always @(posedge VIDCLK) begin
+    case (analogizer_video_type)
+        4'd5, 4'd13:    fx <= 3'd0; //SC  0%
+        4'd6, 4'd14:    fx <= 3'd2; //SC  50%
+        4'd7, 4'd15:    fx <= 3'd4; //hq2x
+        default:        fx <= 3'd0;
+    endcase
+end
+
+openFPGA_Pocket_Analogizer #(.MASTER_CLK_FREQ(48_000_000), .LINE_LENGTH(320)) analogizer (
 	.i_clk(VIDCLK),
 	.i_rst(~reset_l_main), //i_rst is active high
 	.i_ena(1'b1),
 	//Video interface
+	.video_clk(VIDCLK),
 	.analog_video_type(analogizer_video_type),
 	.R(neo_r),
 	.G(neo_g),
@@ -404,21 +422,22 @@ openFPGA_Pocket_Analogizer #(.MASTER_CLK_FREQ(48_000_000)) analogizer (
 	.Hsync(core_hsync),
 	.Vsync(core_vsync),
 	.Csync(SYNC), //composite SYNC on HSync.
-	.video_clk(VIDCLK),
+	
 	  //Video Y/C Encoder interface
     .PALFLAG(VIDEO_MODE),
-	.MULFLAG(1'b0),
-	.CHROMA_ADD(CHROMA_ADD),
-	.CHROMA_MULT(CHROMA_MULT),
 	.CHROMA_PHASE_INC(CHROMA_PHASE_INC),
-	.COLORBURST_RANGE(COLORBURST_RANGE),
     //Video SVGA Scandoubler interface
-    .ce_divider(3'd7),
+    //.ce_pix(CE_PIXEL),
+	.ce_pix(video_rgb_clock),
+    .scandoubler(1'b1), //logic for disable/enable the scandoubler
+	.fx(fx), //0 disable, 1 scanlines 25%, 2 scanlines 50%, 3 scanlines 75%, 4 hq2x
 	//SNAC interface
 	.conf_AB(snac_game_cont_type >= 5'd16),//0 conf. A(default), 1 conf. B (see graph above)
 	.game_cont_type(snac_game_cont_type), //0-15 Conf. A, 16-31 Conf. B
 	.p1_btn_state(p1_btn),
+	.p1_joy_state(p1_stick),
 	.p2_btn_state(p2_btn),
+    .p2_joy_state(p2_stick),
 	.p3_btn_state(),
 	.p4_btn_state(), 
 	.busy(),   

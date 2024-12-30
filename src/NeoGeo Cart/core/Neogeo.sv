@@ -164,7 +164,9 @@ module emu
 	output VIDEO_MODE,
 	output SYSTEM,
 	input [15:0] snac_p1,
+	input [31:0] snac_p1_stick,
 	input [15:0] snac_p2,
+	input [31:0] snac_p2_stick,
 	output core_hsync,
 	output core_vsync,
     output [4:0] snac_game_cont_type,
@@ -341,6 +343,7 @@ end
 
 wire [15:0] joystick_0;	// ----HNLS DCBAUDLR
 wire [15:0] joystick_1;
+wire [31:0] joy_0, joy_1;
 wire  [8:0] spinner_0, spinner_1;
 wire  [1:0] buttons;
 wire [10:0] ps2_key;
@@ -394,36 +397,73 @@ wire [23:0] V2ROM_MASK;
 wire [2:0]  C1_wait;
 
 /*[ANALOGIZER_HOOK_BEGIN]*/
-wire p1_interface, p2_interface;
+//use PSX Dual Shock style left analog stick as directional pad
+wire is_analog_input = (snac_game_cont_type == 5'h13);
+
+//! Player 1 ---------------------------------------------------------------------------
+reg p1_up, p1_down, p1_left, p1_right;
+wire p1_up_analog, p1_down_analog, p1_left_analog, p1_right_analog;
+//using left analog joypad
+
+assign p1_up_analog    = (snac_p1_stick[15:8] < 8'h40) ? 1'b1 : 1'b0; //analog range UP 0x00 Idle 0x7F DOWN 0xFF, DEADZONE +- 0x15
+assign p1_down_analog  = (snac_p1_stick[15:8] > 8'hC0) ? 1'b1 : 1'b0; 
+assign p1_left_analog  = (snac_p1_stick[7:0]  < 8'h40) ? 1'b1 : 1'b0; //analog range LEFT 0x00 Idle 0x7F RIGHT 0xFF, DEADZONE +- 0x15
+assign p1_right_analog = (snac_p1_stick[7:0]  > 8'hC0) ? 1'b1 : 1'b0;
+
+always @(posedge clk_sys) begin
+    p1_up    <= (is_analog_input) ? p1_up_analog    : snac_p1[0];
+    p1_down  <= (is_analog_input) ? p1_down_analog  : snac_p1[1];
+    p1_left  <= (is_analog_input) ? p1_left_analog  : snac_p1[2];
+    p1_right <= (is_analog_input) ? p1_right_analog : snac_p1[3];
+end
+
+//! Player 2 ---------------------------------------------------------------------------
+reg p2_up, p2_down, p2_left, p2_right;
+wire p2_up_analog, p2_down_analog, p2_left_analog, p2_right_analog;
+//using left analog joypad
+
+assign p2_up_analog    = (snac_p2_stick[15:8] < 8'h40) ? 1'b1 : 1'b0; //analog range UP 0x00 Idle 0x80 DOWN 0xFF, DEADZONE +- 0x15
+assign p2_down_analog  = (snac_p2_stick[15:8] > 8'hC0) ? 1'b1 : 1'b0; 
+assign p2_left_analog  = (snac_p2_stick[7:0]  < 8'h40) ? 1'b1 : 1'b0; //analog range LEFT 0x00 Idle 0x80 RIGHT 0xFF, DEADZONE +- 0x15
+assign p2_right_analog = (snac_p2_stick[7:0]  > 8'hC0) ? 1'b1 : 1'b0;
+
+always @(posedge clk_sys) begin
+    p2_up    <= (is_analog_input) ? p2_up_analog    : snac_p2[0];
+    p2_down  <= (is_analog_input) ? p2_down_analog  : snac_p2[1];
+    p2_left  <= (is_analog_input) ? p2_left_analog  : snac_p2[2];
+    p2_right <= (is_analog_input) ? p2_right_analog : snac_p2[3];
+end
+
+//wire p1_interface, p2_interface;
 wire [15:0] pocket_p1;	// ----HNLS DCBAUDLR
 wire [15:0] pocket_p2;
 
 always @(posedge clk_sys) begin
 	if(snac_game_cont_type == 5'h0) begin //SNAC is disabled
-					joystick_0 <= pocket_p1;
-					joystick_1 <= pocket_p2;
+					joystick_0 <= {snac_p1[15:4],p1_up,p1_down,p1_left,p1_right};
+					joystick_1 <= {snac_p2[15:4],p2_up,p2_down,p2_left,p2_right};
 
 	end
 	else begin
 		case(snac_cont_assignment)
 		4'h0:    begin 
-					joystick_0 <= snac_p1;
+					joystick_0 <= {snac_p1[15:4],p1_up,p1_down,p1_left,p1_right};
 					joystick_1 <= pocket_p2;
 
 				end
 		4'h1:    begin 
 					joystick_0 <= pocket_p1;
-					joystick_1 <= snac_p1;
+					joystick_1 <= {snac_p1[15:4],p1_up,p1_down,p1_left,p1_right};
 
 				end
 		4'h2:    begin
-					joystick_0 <= snac_p1;
-					joystick_1 <= snac_p2;
+					joystick_0 <= {snac_p1[15:4],p1_up,p1_down,p1_left,p1_right};
+					joystick_1 <= {snac_p2[15:4],p2_up,p2_down,p2_left,p2_right};
 
 				end
 		4'h3:    begin
-					joystick_0 <= snac_p2;
-					joystick_1 <= snac_p1;
+					joystick_0 <= {snac_p2[15:4],p2_up,p2_down,p2_left,p2_right};
+					joystick_1 <= {snac_p1[15:4],p1_up,p1_down,p1_left,p1_right};
 
 				end
 		default: begin
@@ -1685,6 +1725,14 @@ assign SYSTEM = SYSTEM_TYPE;
 	
 
 	//Analogizer hook
+	reg ce_pix;
+
+	assign CE_PIXEL = ce_pix;
+	always @(posedge CLK_SYS_48) begin
+		ce_pix <= 0;
+		if(CLK_6MB) ce_pix <= 1;
+	end
+	
 	assign core_hsync = HSync_reg;
 	assign core_vsync = VSync_reg;
 
