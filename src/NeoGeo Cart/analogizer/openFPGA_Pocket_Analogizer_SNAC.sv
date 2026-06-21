@@ -368,7 +368,7 @@ module openFPGA_Pocket_Analogizer_SNAC #(parameter MASTER_CLK_FREQ=50_000_000)
     (
         .i_clk(i_clk),
         .i_rst(reset_on_change),
-        .game_controller_type(game_cont_type[3:0]), //0x1 DB15, 0x2 NES, 0x3 SNES, 0x9 DB15 FAST, 0XB SNES SWAP A,B<->X,Y
+        .game_controller_type(game_cont_type[3:0]), //0x1 DB15, 0x2 NES, 0x3 SNES (NEW pad), 0x9 DB15 FAST, 0XB SNES SWAP (OLD pad)
         .i_stb(stb_clk),
         .p1_btn_state(sl_p1),
         .p2_btn_state(sl_p2),

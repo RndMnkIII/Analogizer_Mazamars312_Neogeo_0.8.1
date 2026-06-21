@@ -146,7 +146,7 @@ module serlatch_game_controller #(parameter MASTER_CLK_FREQ=53_600_000)
 (
     input wire i_clk,
 	input wire i_rst,
-    input wire [3:0] game_controller_type, //0x0 DISABLED, 0x1 DB15, 0x2 NES, 0x3 SNES, 0x9 DB15 Fast, 0xB SNES SWAP A,B<->X,Y
+    input wire [3:0] game_controller_type, //0x0 DISABLED, 0x1 DB15, 0x2 NES, 0x3 SNES (NEW pad), 0x9 DB15 Fast, 0xB SNES SWAP (OLD pad)
     input wire i_stb,
     output reg [15:0] p1_btn_state,
     output reg [15:0] p2_btn_state,
@@ -247,26 +247,30 @@ module serlatch_game_controller #(parameter MASTER_CLK_FREQ=53_600_000)
                                 p1_btn_state <= ~{p1b_r[3],p1b_r[2],     1'b1,     1'b1,  1'b1,  1'b1,  1'b1,  1'b1, 1'b1,     1'b1,     p1b_r[1], p1b_r[0],p1b_r[7],p1b_r[6],p1b_r[5],p1b_r[4]};
                                 p2_btn_state <= ~{p2b_r[3],p2b_r[2],     1'b1,     1'b1,  1'b1,  1'b1,  1'b1,  1'b1, 1'b1,     1'b1,     p2b_r[1], p2b_r[0],p2b_r[7],p2b_r[6],p2b_r[5],p2b_r[4]};
                             end
-                            4'h3: begin //SNES
+                            4'h3: begin //SNES -> NeoGeo NEW pad layout (diamond: top=C left=A right=D bottom=B)
                                 //SNAC SNES adapter button order from first to last
                                 //  0   1   2   3   4   5   6   7   8   9  10  11  12 13 14 15
                                 //  B   Y SEL  ST  UP  DW  LF  RG   A   X  LT  LR   H  H  H  H
 
+                                //NEW pad: NeoGeo A=SNES Y, B=SNES B, C=SNES X, D=SNES A
+                                //Pocket nibble {Y,X,B,A} feeds NeoGeo {D,C,B,A}: Y<-SNES A, X<-SNES X, B<-SNES B, A<-SNES Y
                                 //follow Pocket game controls order:
                                 //                START    SELECT   R3     L3     R2     L2    R1         L1         Y         X         B         A        RIGHT    LEFT     DOWN      UP
-                                p1_btn_state <= ~{p1b_r[3],p1b_r[2],1'b1,  1'b1,  1'b1,  1'b1, p1b_r[11], p1b_r[10], p1b_r[1], p1b_r[9], p1b_r[0], p1b_r[8],p1b_r[7],p1b_r[6], p1b_r[5],p1b_r[4]};
-                                p2_btn_state <= ~{p2b_r[3],p2b_r[2],1'b1,  1'b1,  1'b1,  1'b1, p2b_r[11], p2b_r[10], p2b_r[1], p2b_r[9], p2b_r[0], p2b_r[8],p2b_r[7],p2b_r[6], p2b_r[5],p2b_r[4]};
+                                p1_btn_state <= ~{p1b_r[3],p1b_r[2],1'b1,  1'b1,  1'b1,  1'b1, p1b_r[11], p1b_r[10], p1b_r[8], p1b_r[9], p1b_r[0], p1b_r[1],p1b_r[7],p1b_r[6], p1b_r[5],p1b_r[4]};
+                                p2_btn_state <= ~{p2b_r[3],p2b_r[2],1'b1,  1'b1,  1'b1,  1'b1, p2b_r[11], p2b_r[10], p2b_r[8], p2b_r[9], p2b_r[0], p2b_r[1],p2b_r[7],p2b_r[6], p2b_r[5],p2b_r[4]};
 
                             end
-                            4'hB: begin //SNES SWAP A,B <-> X,Y
+                            4'hB: begin //SNES -> NeoGeo OLD pad layout (diamond: top=D left=C right=B bottom=A)
                                 //SNAC SNES adapter button order from first to last
                                 //  0   1   2   3   4   5   6   7   8   9  10  11  12 13 14 15
                                 //  B   Y SEL  ST  UP  DW  LF  RG   A   X  LT  LR   H  H  H  H
 
+                                //OLD pad: NeoGeo A=SNES B, B=SNES A, C=SNES Y, D=SNES X
+                                //Pocket nibble {Y,X,B,A} feeds NeoGeo {D,C,B,A}: Y<-SNES X, X<-SNES Y, B<-SNES A, A<-SNES B
                                 //follow Pocket game controls order:
                                 //                START    SELECT   R3     L3     R2     L2    R1         L1         Y         X         B         A        RIGHT    LEFT     DOWN      UP
-                                p1_btn_state <= ~{p1b_r[3],p1b_r[2],1'b1,  1'b1,  1'b1,  1'b1, p1b_r[11], p1b_r[10], p1b_r[0], p1b_r[8], p1b_r[1], p1b_r[9],p1b_r[7],p1b_r[6], p1b_r[5],p1b_r[4]};
-                                p2_btn_state <= ~{p2b_r[3],p2b_r[2],1'b1,  1'b1,  1'b1,  1'b1, p2b_r[11], p2b_r[10], p2b_r[0], p2b_r[8], p2b_r[1], p2b_r[9],p2b_r[7],p2b_r[6], p2b_r[5],p2b_r[4]};
+                                p1_btn_state <= ~{p1b_r[3],p1b_r[2],1'b1,  1'b1,  1'b1,  1'b1, p1b_r[11], p1b_r[10], p1b_r[9], p1b_r[1], p1b_r[8], p1b_r[0],p1b_r[7],p1b_r[6], p1b_r[5],p1b_r[4]};
+                                p2_btn_state <= ~{p2b_r[3],p2b_r[2],1'b1,  1'b1,  1'b1,  1'b1, p2b_r[11], p2b_r[10], p2b_r[9], p2b_r[1], p2b_r[8], p2b_r[0],p2b_r[7],p2b_r[6], p2b_r[5],p2b_r[4]};
 
                             end
                             default:

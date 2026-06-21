@@ -32,10 +32,13 @@ The core can output RGBS, RGsB, YPbPr, Y/C and SVGA scandoubler (50% scanlines) 
 | DB15                    | A                            |  ✅    |
 | NES                     | A                            |  ✅    |
 | SNES                    | A                            |  ✅    |
+| SNES SWAP               | A                            |  ✅    |
 | PCENGINE                | A                            |  ✅    |
 | PCE MULTITAP            | A                            |  ✅    |
 | PSX DS/DS2 Digital DPAD | B                            |  ✅    |
 | PSX DS/DS2 Analog  DPAD | B                            |  ✅    |
+
+The two SNES entries select which NeoGeo official pad button layout the SNES face buttons map to (SNK relabeled A/B/C/D between pad revisions): **SNES** = NEW pad layout (diamond top=C, left=A, right=D, bottom=B), **SNES SWAP** = OLD pad layout (diamond top=D, left=C, right=B, bottom=A).
 
 The Analogizer interface allow to mix game inputs from compatible SNAC gamepads supported by Analogizer (DB15 Neogeo, NES, SNES, PCEngine, PSX) with Analogue Pocket built-in controls or from Dock USB or wireless supported controllers (Analogue support).
 
