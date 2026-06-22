@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <EnsembleReport name="Video_change" kind="Video_change" version="1.0" fabric="QSYS">
- <!-- Format version 18.1 625 (Future versions may contain additional information.) -->
- <!-- 2025.02.04.18:45:26 -->
+ <!-- Format version 18.1 646 (Future versions may contain additional information.) -->
+ <!-- 2026.06.18.01:35:24 -->
  <!-- A collection of modules and connections -->
  <parameter name="AUTO_GENERATION_ID">
   <type>java.lang.Integer</type>
-  <value>1738691125</value>
+  <value>1781739324</value>
   <derived>false</derived>
   <enabled>true</enabled>
   <visible>false</visible>
@@ -360,7 +360,7 @@ parameters are a RESULT of the module parameters. -->
   <name>altera_in_system_sources_probes</name>
   <type>com.altera.entityinterfaces.IElementClass</type>
   <subtype>com.altera.entityinterfaces.IModule</subtype>
-  <displayName><![CDATA[Altera In-System Sources & Probes]]></displayName>
+  <displayName><![CDATA[Intel FPGA In-System Sources & Probes]]></displayName>
   <version>18.1</version>
  </plugin>
  <plugin>
@@ -379,6 +379,6 @@ parameters are a RESULT of the module parameters. -->
   <displayName>Clock Input</displayName>
   <version>18.1</version>
  </plugin>
- <reportVersion>18.1 625</reportVersion>
+ <reportVersion>18.1 646</reportVersion>
  <uniqueIdentifier></uniqueIdentifier>
 </EnsembleReport>
